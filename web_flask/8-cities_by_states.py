@@ -9,25 +9,27 @@ from models.state import State
 from models.city import City
 
 app = Flask(__name__)
-states = dict(sorted(storage.all(State).items(), key=lambda x: x[1]['name']))
-cities = dict(sorted(storage.all(City).items(), key=lambda x: x[1]['name']))
 
-
-@app.teardown_appcontext
-def teardown_db(exception):
+@app.teardown_request
+def teardown_request(exception):
     """Close database connection after the request"""
+    print("Teardown function executed!")
     storage.close()
 
 
 @app.route("/states_list", strict_slashes=False)
 def states_list():
     """Fetch all states """
-    return render_template('7-states_list.html', states_list=states)
+    all_states = storage.all(State)
+    all_states = dict(sorted(all_states.items(), key=lambda x: x[1]['name']))
+    return render_template('7-states_list.html', states_list=all_states)
 
 
 @app.route("/cities_by_states", strict_slashes=False)
 def citiesByStates():
     """Fetch all cities by their states"""
+    states = dict(sorted(storage.all(State).items(), key=lambda x: x[1]['name']))
+    cities = dict(sorted(storage.all(City).items(), key=lambda x: x[1]['name']))
     return render_template('8-cities_by_states.html', states_list=states,
                            cities_list=cities)
 
