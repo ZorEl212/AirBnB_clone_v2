@@ -33,26 +33,19 @@ class DBStorage:
         if getenv("HBNB_ENV") == "test":
             Base.metadata.drop_all(self.__engine)
 
+
     def all(self, cls=None):
-        """Query the table on the current database session"""
-        objs = []
-
-        if cls is None:
-            classes_to_query = [State, City, User, Place, Review, Amenity]
-            for class_to_query in classes_to_query:
-                objs.extend(self.__session.query(class_to_query).all())
-        else:
-            objs = self.__session.query(cls).all()
-
-        # Exclude '_sa_instance_state' from the dictionaries
-        result = {
-            "{}.{}".format(type(o).__name__, o.id): {
-                key: value for key, value in o.__dict__.items()
-                       if key != '_sa_instance_state'  # noqa: E131
-            } for o in objs
-        }
-
-        return result
+        """query on the current database session"""
+        classes = {'Amenity': Amenity, 'City': City, 'Place': Place,
+                   'Review': Review, 'State': State, 'User': User}
+        new_dict = {}
+        for clss in classes:
+            if cls is None or cls is classes[clss] or cls is clss:
+                objs = self.__session.query(classes[clss]).all()
+                for obj in objs:
+                    key = obj.__class__.__name__ + '.' + obj.id
+                    new_dict[key] = obj
+        return (new_dict)
 
     def new(self, obj):
         '''adds the obj to the current db session'''

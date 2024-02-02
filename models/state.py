@@ -15,15 +15,16 @@ class State(BaseModel, Base):
         from models.city import City
         name = Column(String(128), nullable=False)
         cities = relationship("City",  backref="state", cascade="delete")
-
-        @property
-        def cities(self):
-            from models import storage
-            """Get a list of all related City objects."""
-            city_list = []
-            for city in list(storage.all(City).values()):
-                if city.state_id == self.id:
-                    city_list.append(city)
-            return city_list
     else:
         name = ""
+
+    @property
+    def cities(self):
+        from models import storage
+        """Get a list of all related City objects."""
+        city_list = []
+        for city in list(storage.all(City).values()):
+            if city.state_id == self.id:
+                city_list.append(city)
+        return city_list
+
