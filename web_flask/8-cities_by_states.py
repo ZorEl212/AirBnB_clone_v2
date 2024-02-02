@@ -20,18 +20,17 @@ def teardown_request(exception):
 @app.route("/states_list", strict_slashes=False)
 def states_list():
     """Fetch all states """
-    all_states = storage.all(State)
-    all_states = dict(sorted(all_states.items(), key=lambda x: x[1]['name']))
+    all_states = storage.all('State')
+    all_states = sorted(list(all_states.values()), key=lambda x: x.name)
     return render_template('7-states_list.html', states_list=all_states)
 
 
-@app.route("/cities_by_states", strict_slashes=False)
-def citiesByStates():
-    """Fetch all cities by their states"""
-    states = dict(sorted(storage.all(State).items(), key=lambda x: x[1]['name']))
-    cities = dict(sorted(storage.all(City).items(), key=lambda x: x[1]['name']))
-    return render_template('8-cities_by_states.html', states_list=states,
-                           cities_list=cities)
+
+@app.route('/cities_by_states', strict_slashes=False)
+def cities_by_states():
+    """display the states and cities listed in alphabetical order"""
+    states = storage.all("State").values()
+    return render_template('8-cities_by_states.html', states=states)
 
 
 if __name__ == "__main__":
