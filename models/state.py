@@ -5,6 +5,7 @@ from models.base_model import Base, BaseModel
 from sqlalchemy import Column, ForeignKey, String
 from models.city import City
 from sqlalchemy.orm import relationship
+from models import storage
 
 
 class State(BaseModel, Base):
@@ -18,13 +19,13 @@ class State(BaseModel, Base):
     else:
         name = ""
 
-    @property
-    def cities(self):
-        from models import storage
-        """Get a list of all related City objects."""
-        city_list = []
-        for city in list(storage.all(City).values()):
-            if city.state_id == self.id:
-                city_list.append(city)
-        return city_list
+    if getenv('HBNB_TYPE_STORAGE') != "db":
+        @property
+        def cities(self):
+            """Get a list of all related City objects."""
+            city_list = []
+            for city in list(storage.all(City).values()):
+                if city.state_id == self.id:
+                    city_list.append(city)
+            return city_list
 
