@@ -21,8 +21,8 @@ def teardown_db(exception):
 @app.route("/states_list", strict_slashes=False)
 def states_list():
     """Fetch all states """
-    all_states = storage.all(State)
-    all_states = dict(sorted(all_states.items(), key=lambda x: x[1]['name']))
+    all_states = storage.all('State')
+    all_states = sorted(list(all_states.values()), key=lambda x: x.name)
     return render_template('7-states_list.html', states_list=all_states)
 
 
